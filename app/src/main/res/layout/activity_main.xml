@@ -15,11 +15,12 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:visibility="visible">
 
-        <TextView
+        <Button
+            android:id="@+id/btnEnterAr"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="Some AR content" />
+            android:text="Enter AR" />
     </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
