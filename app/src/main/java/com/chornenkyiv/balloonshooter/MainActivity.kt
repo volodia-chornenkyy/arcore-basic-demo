@@ -1,5 +1,6 @@
 package com.chornenkyiv.balloonshooter
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -8,6 +9,7 @@ import com.chornenkyiv.balloonshooter.ar.ARCoreAvailabilityCallback
 import com.chornenkyiv.balloonshooter.ar.ARCoreAvailabilityStatus
 import com.chornenkyiv.balloonshooter.ar.ARCoreHelper
 import com.chornenkyiv.balloonshooter.ar.CameraPermissionHelper
+import com.chornenkyiv.balloonshooter.ar.view.DemoArActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -40,6 +42,10 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             })
+        }
+
+        btnEnterAr.setOnClickListener {
+            startActivity(Intent(this@MainActivity, DemoArActivity::class.java))
         }
     }
 
