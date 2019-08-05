@@ -2,6 +2,9 @@ package com.chornenkyiv.balloonshooter.ar
 
 import android.app.Activity
 import com.google.ar.core.ArCoreApk
+import com.google.ar.core.Config
+import com.google.ar.core.Config.UpdateMode
+import com.google.ar.core.Session
 
 
 class ARCoreHelper(private val activity: Activity) {
@@ -25,5 +28,16 @@ class ARCoreHelper(private val activity: Activity) {
         // INSTALLED or throw an UnavailableUserDeclinedInstallationException.
         val alwaysAskToInstall = true
         ArCoreApk.getInstance().requestInstall(activity, alwaysAskToInstall)
+    }
+
+    fun createArSession(): Session {
+        val session = Session(activity)
+        // IMPORTANT!!!  ArSceneView requires the `LATEST_CAMERA_IMAGE` non-blocking update mode.
+        val config = Config(session)
+        config.updateMode = UpdateMode.LATEST_CAMERA_IMAGE
+        config.focusMode = Config.FocusMode.AUTO
+        config.planeFindingMode = Config.PlaneFindingMode.HORIZONTAL
+        session.configure(config)
+        return session
     }
 }
