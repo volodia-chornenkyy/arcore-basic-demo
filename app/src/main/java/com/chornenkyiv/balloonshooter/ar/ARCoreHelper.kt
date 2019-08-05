@@ -1,20 +1,29 @@
 package com.chornenkyiv.balloonshooter.ar
 
-import android.content.Context
-import android.os.Handler
+import android.app.Activity
 import com.google.ar.core.ArCoreApk
 
 
-class ARCoreHelper(context: Context) {
+class ARCoreHelper(private val activity: Activity) {
 
-    private val arAvailability = ArCoreApk.getInstance().checkAvailability(context)
-
-    fun checkIfArCoreSupported(availabilityCallback: ARCoreAvailabilityCallback) {
-        if (arAvailability.isTransient) {
-            // May need to query network resources to determine whether the device supports ARCore.
-            Handler().postDelayed({ checkIfArCoreSupported(availabilityCallback) }, 200)
+    /**
+     * Official solution with isTransient() is not working as always returns "false".
+     *
+     * Looks like it only checks if package can be installed of the Play Market.
+     * https://github.com/google-ar/arcore-android-sdk/issues/162#issuecomment-427602424
+     */
+    fun checkIfArCoreAvailable(availabilityCallback: ARCoreAvailabilityCallback) {
+        if (ArCoreApk.getInstance().checkAvailability(activity).isSupported.not()) {
+            availabilityCallback.handleARCoreAvailability(ARCoreAvailabilityStatus.NEED_INSTALL)
+        } else {
+            availabilityCallback.handleARCoreAvailability(ARCoreAvailabilityStatus.AVAILABLE)
         }
+    }
 
-        availabilityCallback.handleARCoreAvailability(arAvailability.isSupported)
+    fun askToInstallArCore() {
+        // if pass "false" next invocation of requestInstall() will either return
+        // INSTALLED or throw an UnavailableUserDeclinedInstallationException.
+        val alwaysAskToInstall = true
+        ArCoreApk.getInstance().requestInstall(activity, alwaysAskToInstall)
     }
 }

@@ -2,5 +2,5 @@ package com.chornenkyiv.balloonshooter.ar
 
 interface ARCoreAvailabilityCallback {
 
-    fun handleARCoreAvailability(available: Boolean)
+    fun handleARCoreAvailability(status: ARCoreAvailabilityStatus)
 }
