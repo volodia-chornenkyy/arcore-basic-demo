@@ -1,8 +1,11 @@
 package com.chornenkyiv.balloonshooter
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.chornenkyiv.balloonshooter.ar.ARCoreAvailabilityCallback
@@ -24,6 +27,13 @@ class MainActivity : AppCompatActivity() {
 
         btnOpen2d.setOnClickListener {
             showShortToast("Not implemented")
+        }
+
+        // Android 7.0 is min supported version for ARCore
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            btnOpenAr.visibility = VISIBLE
+        } else {
+            btnOpenAr.visibility = GONE
         }
 
         btnOpenAr.setOnClickListener {
