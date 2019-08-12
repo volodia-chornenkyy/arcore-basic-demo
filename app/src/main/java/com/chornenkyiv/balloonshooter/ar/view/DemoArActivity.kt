@@ -132,6 +132,9 @@ class DemoArActivity : AppCompatActivity() {
         val modelNode = Node()
         modelNode.setParent(base)
         modelNode.localPosition = Vector3(0f, 0f, 0f)
+        modelNode.setOnTapListener { node, _ ->
+            node.node?.setParent(null) // delete node on tap
+        }
 
         MaterialFactory.makeOpaqueWithColor(
             this, Color(android.graphics.Color.RED)
