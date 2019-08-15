@@ -21,7 +21,9 @@ import com.google.ar.sceneform.Node
 import com.google.ar.sceneform.math.Vector3
 import com.google.ar.sceneform.rendering.Color
 import com.google.ar.sceneform.rendering.MaterialFactory
+import com.google.ar.sceneform.rendering.PlaneRenderer.MATERIAL_TEXTURE
 import com.google.ar.sceneform.rendering.ShapeFactory
+import com.google.ar.sceneform.rendering.Texture
 import kotlinx.android.synthetic.main.activity_ar.*
 import java.util.concurrent.TimeUnit
 
@@ -32,6 +34,7 @@ class DemoArActivity : AppCompatActivity() {
     private lateinit var gestureDetector: GestureDetector
     private var loadingMessageSnackbar: Snackbar? = null
 
+    @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_ar)
@@ -83,6 +86,8 @@ class DemoArActivity : AppCompatActivity() {
                     }
                 }
             }
+
+        setPlaneTexture("texture.png")
     }
 
     override fun onResume() {
@@ -227,5 +232,30 @@ class DemoArActivity : AppCompatActivity() {
 
     private fun deleteNode(node: Node) {
         node.setParent(null)
+    }
+
+    /**
+     * Sets the plane renderer texture.
+     * @param texturePath - Path to texture to use in the assets directory.
+     */
+    @RequiresApi(Build.VERSION_CODES.N)
+    private fun setPlaneTexture(texturePath: String) {
+
+        val sampler = Texture.Sampler.builder()
+            .setMinFilter(Texture.Sampler.MinFilter.LINEAR_MIPMAP_LINEAR)
+            .setMagFilter(Texture.Sampler.MagFilter.LINEAR)
+            .setWrapMode(Texture.Sampler.WrapMode.REPEAT)
+            .build()
+
+        Texture.builder()
+            .setSource { assets.open(texturePath) }
+            .setSampler(sampler)
+            .build()
+            .thenAccept(fun(texture: Texture) {
+                arSceneView.planeRenderer.material
+                    .thenAccept {
+                        it.setTexture(MATERIAL_TEXTURE, texture)
+                    }
+            })
     }
 }
