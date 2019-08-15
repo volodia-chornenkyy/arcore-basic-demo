@@ -119,11 +119,6 @@ class DemoArActivity : AppCompatActivity() {
                     val anchor = hit.createAnchor()
                     val anchorNode = AnchorNode(anchor)
                     anchorNode.setParent(arSceneView.scene)
-                    anchorNode.setOnTapListener(object : Node.OnTapListener {
-                        override fun onTap(p0: HitTestResult?, p1: MotionEvent?) {
-                            p0?.node?.localPosition = Vector3(0f, 10f, 0f)
-                        }
-                    })
                     val node = createNode()
                     anchorNode.addChild(node)
                     return true
