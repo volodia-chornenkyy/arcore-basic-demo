@@ -124,8 +124,8 @@ class DemoArActivity : AppCompatActivity() {
                     val anchor = hit.createAnchor()
                     val anchorNode = AnchorNode(anchor)
                     anchorNode.setParent(arSceneView.scene)
-                    val node = createNode()
-                    anchorNode.addChild(node)
+
+                    anchorNode.addChild(createNode(0f, 0f))
                     return true
                 }
             }
@@ -135,12 +135,12 @@ class DemoArActivity : AppCompatActivity() {
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
-    private fun createNode(): Node {
+    private fun createNode(x: Float, y: Float): Node {
         val base = Node()
 
         val modelNode = Node()
         modelNode.setParent(base)
-        modelNode.localPosition = Vector3(0f, 0f, 0f)
+        modelNode.localPosition = Vector3(x, y, 0f)
         modelNode.setOnTapListener { hitTestResult, _ ->
             deleteNode(hitTestResult.node!!) // delete hitTestResult on tap
         }
