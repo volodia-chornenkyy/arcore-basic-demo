@@ -137,7 +137,7 @@ class DemoArActivity : AppCompatActivity() {
         modelNode.setParent(base)
         modelNode.localPosition = Vector3(0f, 0f, 0f)
         modelNode.setOnTapListener { hitTestResult, _ ->
-            // hitTestResult.node?.setParent(null) // delete hitTestResult on tap
+            deleteNode(hitTestResult.node!!) // delete hitTestResult on tap
         }
         modelNode.addLifecycleListener(object : Node.LifecycleListener {
             override fun onActivated(node: Node?) {
