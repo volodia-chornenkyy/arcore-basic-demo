@@ -1,5 +1,6 @@
 package com.chornenkyiv.balloonshooter.ar.view
 
+import android.animation.ObjectAnimator
 import android.os.Build
 import android.os.Bundle
 import android.view.GestureDetector
@@ -20,6 +21,7 @@ import com.google.ar.sceneform.rendering.Color
 import com.google.ar.sceneform.rendering.MaterialFactory
 import com.google.ar.sceneform.rendering.ShapeFactory
 import kotlinx.android.synthetic.main.activity_ar.*
+import java.util.concurrent.TimeUnit
 
 class DemoArActivity : AppCompatActivity() {
 
@@ -115,6 +117,11 @@ class DemoArActivity : AppCompatActivity() {
                     val anchor = hit.createAnchor()
                     val anchorNode = AnchorNode(anchor)
                     anchorNode.setParent(arSceneView.scene)
+                    anchorNode.setOnTapListener(object : Node.OnTapListener {
+                        override fun onTap(p0: HitTestResult?, p1: MotionEvent?) {
+                            p0?.node?.localPosition = Vector3(0f, 10f, 0f)
+                        }
+                    })
                     val node = createNode()
                     anchorNode.addChild(node)
                     return true
@@ -133,7 +140,8 @@ class DemoArActivity : AppCompatActivity() {
         modelNode.setParent(base)
         modelNode.localPosition = Vector3(0f, 0f, 0f)
         modelNode.setOnTapListener { node, _ ->
-            node.node?.setParent(null) // delete node on tap
+            // node.node?.setParent(null) // delete node on tap
+            animateNode(node.node!!)
         }
 
         MaterialFactory.makeOpaqueWithColor(
@@ -171,5 +179,22 @@ class DemoArActivity : AppCompatActivity() {
 
         loadingMessageSnackbar?.dismiss()
         loadingMessageSnackbar = null
+    }
+
+    private fun animateNode(node: Node) {
+        val durationInMilliseconds = TimeUnit.SECONDS.toMillis(10)
+        val minimumIntensity = 0.0f
+        val maximumIntensity = 1.0f
+        val intensityAnimator = ObjectAnimator.ofFloat(minimumIntensity, maximumIntensity)
+        intensityAnimator.addUpdateListener {
+            shiftNodeYBy(node, it.animatedValue as Float)
+        }
+        intensityAnimator.duration = durationInMilliseconds
+        intensityAnimator.start()
+    }
+
+    private fun shiftNodeYBy(node: Node, shift: Float) {
+        node.localPosition =
+            Vector3(node.localPosition.x, node.localPosition.y + shift, node.localPosition.z)
     }
 }
