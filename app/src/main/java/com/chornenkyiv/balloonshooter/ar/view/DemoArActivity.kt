@@ -1,5 +1,6 @@
 package com.chornenkyiv.balloonshooter.ar.view
 
+import android.animation.Animator
 import android.animation.ObjectAnimator
 import android.os.Build
 import android.os.Bundle
@@ -14,6 +15,7 @@ import com.google.ar.core.Frame
 import com.google.ar.core.Plane
 import com.google.ar.core.TrackingState
 import com.google.ar.sceneform.AnchorNode
+import com.google.ar.sceneform.FrameTime
 import com.google.ar.sceneform.HitTestResult
 import com.google.ar.sceneform.Node
 import com.google.ar.sceneform.math.Vector3
@@ -139,10 +141,39 @@ class DemoArActivity : AppCompatActivity() {
         val modelNode = Node()
         modelNode.setParent(base)
         modelNode.localPosition = Vector3(0f, 0f, 0f)
-        modelNode.setOnTapListener { node, _ ->
-            // node.node?.setParent(null) // delete node on tap
-            animateNode(node.node!!)
+        modelNode.setOnTapListener { hitTestResult, _ ->
+            // hitTestResult.node?.setParent(null) // delete hitTestResult on tap
         }
+        modelNode.addLifecycleListener(object : Node.LifecycleListener {
+            override fun onActivated(node: Node?) {
+                // Start animation once node will be created
+                animateNode(node!!, object : Animator.AnimatorListener {
+                    override fun onAnimationRepeat(p0: Animator?) {
+                        //no-op
+                    }
+
+                    override fun onAnimationStart(p0: Animator?) {
+                        //no-op
+                    }
+
+                    override fun onAnimationEnd(p0: Animator?) {
+                        deleteNode(node)
+                    }
+
+                    override fun onAnimationCancel(p0: Animator?) {
+                        //no-op
+                    }
+                })
+            }
+
+            override fun onDeactivated(p0: Node?) {
+                //no-op
+            }
+
+            override fun onUpdated(p0: Node?, p1: FrameTime?) {
+                //no-op
+            }
+        })
 
         MaterialFactory.makeOpaqueWithColor(
             this, Color(android.graphics.Color.RED)
@@ -181,20 +212,25 @@ class DemoArActivity : AppCompatActivity() {
         loadingMessageSnackbar = null
     }
 
-    private fun animateNode(node: Node) {
+    private fun animateNode(node: Node, animatorListener: Animator.AnimatorListener) {
         val durationInMilliseconds = TimeUnit.SECONDS.toMillis(10)
         val minimumIntensity = 0.0f
-        val maximumIntensity = 1.0f
+        val maximumIntensity = 2.0f
         val intensityAnimator = ObjectAnimator.ofFloat(minimumIntensity, maximumIntensity)
         intensityAnimator.addUpdateListener {
-            shiftNodeYBy(node, it.animatedValue as Float)
+            updateNodeY(node, it.animatedValue as Float)
         }
+        intensityAnimator.addListener(animatorListener)
         intensityAnimator.duration = durationInMilliseconds
         intensityAnimator.start()
     }
 
-    private fun shiftNodeYBy(node: Node, shift: Float) {
+    private fun updateNodeY(node: Node, y: Float) {
         node.localPosition =
-            Vector3(node.localPosition.x, node.localPosition.y + shift, node.localPosition.z)
+            Vector3(node.localPosition.x, y, node.localPosition.z)
+    }
+
+    private fun deleteNode(node: Node) {
+        node.setParent(null)
     }
 }
