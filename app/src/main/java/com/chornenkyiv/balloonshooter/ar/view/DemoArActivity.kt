@@ -4,6 +4,7 @@ import android.animation.Animator
 import android.animation.ObjectAnimator
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
 import android.view.GestureDetector
 import android.view.MotionEvent
 import androidx.annotation.RequiresApi
@@ -125,13 +126,29 @@ class DemoArActivity : AppCompatActivity() {
                     val anchorNode = AnchorNode(anchor)
                     anchorNode.setParent(arSceneView.scene)
 
-                    anchorNode.addChild(createNode(0f, 0f))
+                    generateNodes(anchorNode, 10, 1000)
                     return true
                 }
             }
         }
 
         return false
+    }
+
+    @RequiresApi(Build.VERSION_CODES.N)
+    private fun generateNodes(anchorNode: AnchorNode, amount: Int, delayMillis: Long) {
+        val handler = Handler()
+        for (i in 0 until amount) {
+            handler.postDelayed({ generateRandomlyPlacedNode(anchorNode) }, delayMillis * i)
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.N)
+    private fun generateRandomlyPlacedNode(anchorNode: AnchorNode) {
+        // Math.random() generates double in 0..1 range which corresponds to real 1 meter in ARCore
+        val x = Math.random().toFloat() / 2
+        val y = Math.random().toFloat() / 2
+        anchorNode.addChild(createNode(x, y))
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
