@@ -81,10 +81,17 @@ class DemoArActivity : AppCompatActivity() {
                     return@addOnUpdateListener
                 }
 
+                var planeTracked = false
                 for (plane in frame.getUpdatedTrackables(Plane::class.java)) {
                     if (plane.trackingState === TrackingState.TRACKING) {
-                        hideLoadingMessage()
+                        planeTracked = true
+                        break
                     }
+                }
+                if (planeTracked) {
+                    hideLoadingMessage()
+                } else {
+                    showLoadingMessage()
                 }
             }
 
